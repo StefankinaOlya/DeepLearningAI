@@ -11,11 +11,15 @@
 
 KNN.ipynb - следуйте инструкциям в ноутбуке. Оригинальный ноутбук.
 
-KNN_solution.ipynb - моё решение.
+knn_my.py - мой вариант решения для подсчета compute_distances_two_loops, compute_distances_one_loop, compute_distances_no_loops, predict_labels_binary, predict_labels_multiclass.
+
+metrics_my.py - мой вариант решения для вычисления binary_classification_metrics, multiclass_accuracy.
+
+KNN_my.ipynb - мой вариант решения для вычисления кросс-валидации. 
+
 
 ## Часть 2
 Линейный классификатор (Linear classifier)
 
 Linear classifier.ipynb - следуйте инструкциям в ноутбуке. оригинальный ноутбук.
 
-Linear classifier_solution.ipynb - мое решение. 
