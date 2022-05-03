@@ -121,9 +121,10 @@ class KNN:
         num_test = dists.shape[0]
         pred = np.zeros(num_test, np.bool)
         for i in range(num_test):
-            # TODO: Implement choosing best class based on k
-            # nearest training samples
-            pass
+            if sum(dists[i]) < sum(dists[0]):
+              pred[i] = False
+            else:
+              pred[i] = True
         return pred
 
     def predict_labels_multiclass(self, dists):
