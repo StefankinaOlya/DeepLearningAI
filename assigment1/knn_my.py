@@ -67,13 +67,25 @@ class KNN:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
         '''
+    def compute_distances_one_loop(self, X):
+        '''
+        Computes L1 distance from every sample of X to every training sample
+        Vectorizes some of the calculations, so only 1 loop is used
+        Arguments:
+        X, np array (num_test_samples, num_features) - samples to run
+        
+        Returns:
+        dists, np array (num_test_samples, num_train_samples) - array
+           with distances between each test and each train sample
+        '''
+        # Пока подумалась сделать заполнение только одной строки, но думаю, что, 
+        #если сделать последовательную вставку каждой строки и подсчитывать для неё разность, то можно получить заполнение как в предыдущей функции
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         dists = np.zeros((num_test, num_train), np.float32)
         for i_test in range(num_test):
-            # TODO: Fill the whole row of dists[i_test]
-            # without additional loops or list comprehensions
-            pass
+            dists[0][i_test] = sum(abs(X[0][:] - self.train_X[:][i_test]))
+        return dists
 
     def compute_distances_no_loops(self, X):
         '''
@@ -86,12 +98,14 @@ class KNN:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
         '''
+        #Тоже не совсем корректный вариант, так как возвращаю матрицу разностей без подсчета общей суммы в каждом элементе.
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         # Using float32 to to save memory - the default is float64
         dists = np.zeros((num_test, num_train), np.float32)
-        # TODO: Implement computing all distances with no loops!
-        pass
+        
+        dists = abs(X[0] - self.train_X[:num_test])
+        return dists
 
     def predict_labels_binary(self, dists):
         '''
