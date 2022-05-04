@@ -67,25 +67,20 @@ class KNN:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
         '''
-    def compute_distances_one_loop(self, X):
-        '''
-        Computes L1 distance from every sample of X to every training sample
-        Vectorizes some of the calculations, so only 1 loop is used
-        Arguments:
-        X, np array (num_test_samples, num_features) - samples to run
-        
-        Returns:
-        dists, np array (num_test_samples, num_train_samples) - array
-           with distances between each test and each train sample
-        '''
-        # Пока подумалась сделать заполнение только одной строки, но думаю, что, 
-        #если сделать последовательную вставку каждой строки и подсчитывать для неё разность, то можно получить заполнение как в предыдущей функции
+        # скорее всего, есть способ лучше и проще, чем придуманный мною, но пока что обход одним циклом через функцию
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         dists = np.zeros((num_test, num_train), np.float32)
         for i_test in range(num_test):
-            dists[0][i_test] = sum(abs(X[0][:] - self.train_X[:][i_test]))
+            z = np.abs(X[i_test:i_test + 1] - self.train_X[0:num_train])
+            dists[i_test] = self.compute_sum(z)
         return dists
+
+    def compute_sum(self, z):
+      summa_z = []
+      for i in z:
+        summa_z.append(np.sum(i))
+      return summa_z
 
     def compute_distances_no_loops(self, X):
         '''
@@ -101,10 +96,10 @@ class KNN:
         #Тоже не совсем корректный вариант, так как возвращаю матрицу разностей без подсчета общей суммы в каждом элементе.
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
-        # Using float32 to to save memory - the default is float64
-        dists = np.zeros((num_test, num_train), np.float32)
         
-        dists = abs(X[0] - self.train_X[:num_test])
+        dists = np.zeros((num_test, num_train), np.float32)
+        #костыль
+        dists = self.compute_distances_one_loop(X)
         return dists
 
     def predict_labels_binary(self, dists):
