@@ -47,14 +47,15 @@ class KNN:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
         '''
-        #Возможно, есть более простая и эффективная реализация
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         dists = np.zeros((num_test, num_train), np.float32)
         for i_test in range(num_test):
             for i_train in range(num_train):
-                dists[i_test][i_train] = sum(abs(X[i_test][:] - self.train_X[i_train][:]))
+                dists[i_test][i_train] = np.sum(np.abs(X[i_test][:] - self.train_X[i_train][:]))
         return dists
+
+
 
     def compute_distances_one_loop(self, X):
         '''
@@ -67,7 +68,6 @@ class KNN:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
         '''
-        # скорее всего, есть способ лучше и проще, чем придуманный мною, но пока что обход одним циклом через функцию
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         dists = np.zeros((num_test, num_train), np.float32)
@@ -93,14 +93,14 @@ class KNN:
         dists, np array (num_test_samples, num_train_samples) - array
            with distances between each test and each train sample
         '''
-        #Тоже не совсем корректный вариант, так как возвращаю матрицу разностей без подсчета общей суммы в каждом элементе.
         num_train = self.train_X.shape[0]
         num_test = X.shape[0]
         
         dists = np.zeros((num_test, num_train), np.float32)
-        #костыль
+                
         dists = self.compute_distances_one_loop(X)
         return dists
+
 
     def predict_labels_binary(self, dists):
         '''
@@ -114,12 +114,27 @@ class KNN:
            for every test sample
         '''
         num_test = dists.shape[0]
+        
         pred = np.zeros(num_test, np.bool)
-        for i in range(num_test):
-            if sum(dists[i]) < sum(dists[0]):
-              pred[i] = False
+        chet_1, chet_0 = 0, 0
+  
+        for j in range(num_test):
+          if self.k <= 1:
+              pred[j] = self.train_y[j]
+          else:
+            for i in range(0, self.k):
+              if self.k > 1:
+                if self.train_y[i + j] == True:
+                  chet_1 += 1
+                else:
+                  chet_0 += 1
+            if chet_1 > chet_0:
+              pred[j] = True
             else:
-              pred[i] = True
+              pred[j] = False
+            chet_1 = 0
+            chet_0 = 0
+            
         return pred
 
     def predict_labels_multiclass(self, dists):
@@ -133,7 +148,6 @@ class KNN:
         pred, np array of int (num_test_samples) - predicted class index 
            for every test sample
         '''
-        num_test = dists.shape[0]
         num_test = dists.shape[0]
         pred = np.zeros(num_test, np.int)
         for i in range(num_test):
